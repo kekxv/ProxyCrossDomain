@@ -3,6 +3,7 @@
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 
+header('Access-Control-Allow-Origin:*');
 header('Content-Type:application/json');
 include dirname(__FILE__) . "/Tools/Tool.php";
 include dirname(__FILE__) . "/Tools/Http.php";
