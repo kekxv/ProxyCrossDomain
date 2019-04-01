@@ -16,12 +16,15 @@ $Message = [
 
 try {
     if (Tools\Tool::isPost() && isset($_POST["url"])) {
-        $data = isset($_POST["data"]) ? json_decode($_POST["data"]) : "";
+        $data = $_POST["data"] ?? "";
+        if (!($_POST["isJson"] ?? false)) {
+            $data = json_decode($data, TRUE);
+        }
         $result = Tools\Http::Send($_POST["url"], $data, $_POST["refererUrl"] ?? "", $method = "POST");
         if ($result === false) throw new Error("请求失败", -1);
         $Message["Result"] = $result;
     } else if (isset($_GET["url"])) {
-        $data = isset($_GET["data"]) ? json_decode($_GET["data"]) : "";
+        $data = isset($_GET["data"]) ? json_decode($_GET["data"], TRUE) : "";
         $result = Tools\Http::Send($_GET["url"], $data, $_GET["refererUrl"] ?? "");
         if ($result === false) throw new Error("请求失败", -1);
         $Message["Result"] = Tools\Tool::ConvertString($result);
