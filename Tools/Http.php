@@ -12,6 +12,7 @@ namespace Tools;
 
 class Http
 {
+    const UserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1";
     /**
      * 发送HTTP请求
      *
@@ -31,9 +32,11 @@ class Http
         $ch = null;
         if ($Headers == null)
             $Headers = [];
+        $Headers[] = 'User-Agent:' . self::UserAgent;
 //            $Headers = ["User-Agent" => "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"];
         if ('POST' === strtoupper($method)) {
             $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_USERAGENT,self::UserAgent);
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_HEADER, 0);
             curl_setopt($ch, CURLOPT_FRESH_CONNECT, 1);
@@ -61,6 +64,7 @@ class Http
             }
 
             $ch = curl_init($real_url);
+            curl_setopt($ch, CURLOPT_USERAGENT,self::UserAgent);
             curl_setopt($ch, CURLOPT_HEADER, 0);
             if ($contentType) {
                 $Headers[] = 'Content-Type:' . $contentType;
@@ -86,7 +90,6 @@ class Http
             if ($debug) var_dump(curl_error($ch));
         }
         $info = curl_getinfo($ch);
-//        var_dump($info);
         $contents = array(
             'httpInfo' => array(
                 'send' => $data,

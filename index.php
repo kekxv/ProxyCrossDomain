@@ -14,6 +14,13 @@ $Message = [
     "Message" => "",
     "Result" => "",
 ];
+$Headers = [];
+if (isset($_POST["Referer"]) || isset($_GET["Referer"])) {
+    $Headers[] = "Referer:" . ($_POST["Referer"] ?? $_GET["Referer"] ?? "");
+}
+if (isset($_POST["Host"]) || isset($_GET["Host"])) {
+    $Headers[] = "Host:" . ($_POST["Host"] ?? $_GET["Host"] ?? "");
+}
 
 try {
     if (Tools\Tool::isPost() && (isset($_POST["url"]) || isset($_GET["url"]))) {
@@ -25,12 +32,18 @@ try {
             }
         }
         $url = $_POST["url"] ?? $_GET["url"];
-        $result = Tools\Http::Send($url, $data, $_POST["refererUrl"] ?? "", "POST", $_SERVER["HTTP_CONTENT_TYPE"] ?? "application/x-www-form-urlencoded");
+        $result = Tools\Http::Send(
+            $url, $data, $_POST["refererUrl"] ?? "", "POST", $_SERVER["HTTP_CONTENT_TYPE"] ?? "application/x-www-form-urlencoded"
+            ,$Headers
+        );
         if ($result === false) throw new Error("请求失败", -1);
         $Message["Result"] = $result;
     } else if (isset($_GET["url"])) {
         $data = isset($_GET["data"]) ? json_decode($_GET["data"], TRUE) : "";
-        $result = Tools\Http::Send($_GET["url"], $data, $_GET["refererUrl"] ?? "","GET",$_SERVER["HTTP_CONTENT_TYPE"] ??"text/html;charset=utf-8");
+        $result = Tools\Http::Send(
+            $_GET["url"], $data, $_GET["refererUrl"] ?? "", "GET", $_SERVER["HTTP_CONTENT_TYPE"] ?? "text/html;charset=utf-8"
+            ,$Headers
+        );
         if ($result === false) throw new Error("请求失败", -1);
         $Message["Result"] = Tools\Tool::ConvertString($result);
     }
