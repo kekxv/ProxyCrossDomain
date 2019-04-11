@@ -13,30 +13,37 @@ namespace Tools;
 class Http
 {
     const UserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1";
+    const PcUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36";
+
     /**
      * 发送HTTP请求
      *
-     * @param string $url 请求地址
-     * @param mixed $data 发送数据
-     * @param string $refererUrl 请求来源地址
-     * @param string $method 请求方式 GET/POST
-     * @param string $contentType
-     * @param $Headers
-     * @param int $timeout
-     * @param bool $proxy
-     * @param bool $debug
+     * @param $option
      * @return boolean|mixed
      */
-    public static function Send($url, $data, $refererUrl = '', $method = 'GET', $contentType = 'application/json', $Headers = null, $timeout = 30, $proxy = false, $debug = false)
+    public static function Send($option)
     {
+        if (!is_array($option)) return false;
+
+        $url = $option["url"];
+        $data = $option["data"];
+        $refererUrl = $option["refererUrl"] ?? '';
+        $method = $option["method"] ?? 'GET';
+        $contentType = $option["contentType"] ?? 'application/json';
+        $Headers = $option["Headers"] ?? null;
+        $timeout = $option["timeout"] ?? 30;
+        $isPc = $option["isPc"] ?? false;
+        $proxy = $option["proxy"] ?? false;
+        $debug = $option["debug"] ?? false;
+
         $ch = null;
         if ($Headers == null)
             $Headers = [];
-        $Headers[] = 'User-Agent:' . self::UserAgent;
-//            $Headers = ["User-Agent" => "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"];
+        $Headers[] = 'User-Agent:' . ($isPc ? self::PcUserAgent : self::UserAgent);
+        //            $Headers = ["User-Agent" => "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"];
         if ('POST' === strtoupper($method)) {
             $ch = curl_init($url);
-            curl_setopt($ch, CURLOPT_USERAGENT,self::UserAgent);
+            curl_setopt($ch, CURLOPT_USERAGENT, self::UserAgent);
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_HEADER, 0);
             curl_setopt($ch, CURLOPT_FRESH_CONNECT, 1);
@@ -64,7 +71,7 @@ class Http
             }
 
             $ch = curl_init($real_url);
-            curl_setopt($ch, CURLOPT_USERAGENT,self::UserAgent);
+            curl_setopt($ch, CURLOPT_USERAGENT, self::UserAgent);
             curl_setopt($ch, CURLOPT_HEADER, 0);
             if ($contentType) {
                 $Headers[] = 'Content-Type:' . $contentType;
