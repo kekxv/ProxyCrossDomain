@@ -49,6 +49,10 @@ class Http
             curl_setopt($ch, CURLOPT_FRESH_CONNECT, 1);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_FORBID_REUSE, 1);
+
+            curl_setopt($ch, CURLOPT_HTTPHEADER,array('Accept-Encoding: gzip, deflate'));
+            curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');//这个是解释gzip内容.................
+
             curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
             if ($refererUrl) {
                 curl_setopt($ch, CURLOPT_REFERER, $refererUrl);
@@ -79,6 +83,10 @@ class Http
             if (count($Headers) > 0)
                 curl_setopt($ch, CURLOPT_HTTPHEADER, $Headers);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+            curl_setopt($ch, CURLOPT_HTTPHEADER,array('Accept-Encoding: gzip, deflate'));
+            curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');//这个是解释gzip内容.................
+
             curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
             if ($refererUrl) {
                 curl_setopt($ch, CURLOPT_REFERER, $refererUrl);
